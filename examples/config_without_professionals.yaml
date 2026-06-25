@@ -1,0 +1,76 @@
+# Example run configuration for shoreline_uncertainty -- WITHOUT a
+# `professionals` block. Use this as a starting point when you only have one
+# analyst's shoreline delineations per year and don't need the
+# inter-analyst/"professional" comparison feature.
+#
+# This points at REAL historical shoreline data for the Allegan, MI site
+# (one of the four original study sites from Wernette et al. 2017): a 1938
+# shoreline and a 2010 shoreline, shipped in examples/data/allegan/. No
+# generator script needs to be run first -- these are real digitized
+# shapefiles, each already carrying a precomputed `UNCERTAINT` attribute
+# (the published 95% positional-uncertainty radius), which is used directly
+# below via `rmse95_override` instead of recomputing it from RMSE
+# components.
+#
+# See examples/config_with_professionals.yaml for a synthetic dataset with
+# independent-analyst comparison enabled (that feature needs 2+ analysts'
+# delineations for the same year, which this real dataset doesn't have).
+#
+# Run with:
+#   python -m shoreline_uncertainty.cli run --config examples/config_without_professionals.yaml
+
+output_dir: examples/output_without_professionals
+
+# Force a common projected CRS for this site. The 2010 shapefile is
+# natively EPSG:26989 (NAD83 / Michigan GeoRef Meters); the 1938 shapefile
+# carries a custom Hotine Oblique Mercator WKT (pyproj resolves it to
+# EPSG:3078, an older Michigan GeoRef definition). Setting target_crs here
+# reprojects both into the same CRS/units before any distance or area
+# calculation -- geopandas/pyproj handle the differing WKTs correctly.
+target_crs: "EPSG:26989"
+
+# Confidence levels used by the legacy/perkal iterative-buffer-growth method
+# and by identify_critical_areas (ignored if epsilon_band_method == "odb").
+confidence_levels: [0.5, 0.9, 0.95]
+
+# T in Wernette et al. (2017) Eq. 4: Ps below this threshold => statistically
+# real change. With real data and 72 years between surveys, some stretches
+# of this shoreline may turn out not to exceed the combined positional
+# uncertainty -- that's a legitimate result, not an error.
+significance_threshold: 0.01
+
+# "odb" (published Overlapping Double Buffer method, recommended), "perkal"
+# (legacy/unpublished iterative buffer-growth method), or "both".
+epsilon_band_method: both
+
+# If true, also write the raw intersection/union geometries for each
+# significant pair (useful for QA in a desktop GIS).
+export_intersect_geometries: true
+
+# Grid cell size (in the site's projected CRS units, usually meters) for the
+# Similarity_Index / Significant_Change raster surfaces. Defaults to 0.5 if
+# omitted; set explicitly here for clarity.
+raster_cell_size: 0.1
+
+sites:
+  - name: allegan
+    # The shoreline is ~1525m long; 10m spacing gives ~152 transects.
+    transect_spacing: 10.0
+    # Cross-shore change between 1938 and 2010 is on the order of tens of
+    # meters (Hausdorff distance ~57m); 300m gives ample margin on both
+    # sides of the baseline to guarantee every transect crosses both years.
+    transect_length: 300.0
+    coordinate_priority: UPPER_LEFT
+    shorelines:
+      - year: 1938
+        path: examples/data/allegan/allegan_shoreline_1938.shp
+        # Precomputed 95% positional-uncertainty radius from the shapefile's
+        # own UNCERTAINT attribute -- skips RMSE component calculation
+        # entirely.
+        rmse95_override: 13.2795
+      - year: 2010
+        path: examples/data/allegan/allegan_shoreline_2010.shp
+        rmse95_override: 10.3848
+    # No `professionals` block -- inter-analyst comparison is simply skipped
+    # for this site. Add one (see config_with_professionals.yaml) at any
+    # time without changing anything else.

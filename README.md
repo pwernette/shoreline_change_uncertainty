@@ -3,6 +3,7 @@
 Shoreline change analysis that accounts for positional uncertainty, from a combination of:
 
 > Wernette, P., A. Shortridge, D. Lusch, and A.F. Arbogast. (2017) Accounting for positional uncertainty in historical shoreline change analysis without ground-reference information. *International Journal of Remote Sensing*, 38(13), 3906-3922. [https://doi.org/10.1080/01431161.2016.1200728](https://doi.org/10.1080/01431161.2016.1200728)
+
 > Wernette, P., J. Lehner, and C. Houser. (2020) What change is ‘real’? A probabilistic approach to accounting for uncertainty in environmental change analysis. *Geomorphology*, 355, 107083. [https://doi.org/10.1016/j.geomorph.2020.107083](https://doi.org/10.1016/j.geomorph.2020.107083)
 
 <img src='/assets/multipanel.png' alt='Multi-panel figure showing the input shorelines, the output similarity-index and significant-change rasters, and the change-probability and rate-of-change statistics' width='100%'>
@@ -140,13 +141,6 @@ drawn over an open aerial-imagery basemap (via
 contextily`) -- this needs outbound network access to a tile server at
 regeneration time, but each figure still renders without it (just minus the
 imagery layer) if tiles can't be fetched:
-
-Synthetic `example_site` (config_with_professionals.yaml):
-
-| | |
-|---|---|
-| ![Shorelines with uncertainty buffers](examples/screenshots/shorelines_with_buffers.png) | ![Shore-normal transects](examples/screenshots/transects.png) |
-| ![Similarity index raster](examples/screenshots/similarity_index.png) | ![Significant change raster](examples/screenshots/significant_change.png) |
 
 Real Allegan, MI data, 1938 vs. 2010 (config_without_professionals.yaml):
 

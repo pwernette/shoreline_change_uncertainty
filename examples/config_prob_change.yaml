@@ -1,0 +1,85 @@
+# Example run configuration for shoreline_uncertainty -- demonstrates the
+# continuous probabilistic position / change-probability surfaces via the
+# standalone `epsilon_band_method: prob_change` shorthand (the
+# horizontal-direction analogue of Wernette et al. (2020)'s vertical DEM
+# change-probability approach). See
+# shoreline_uncertainty/probability_surface.py for the underlying math.
+#
+# This is the "prob_change only, nothing else" form. To get BOTH the ODB
+# similarity_index/significant_change rasters AND these Gaussian probability
+# surfaces from the same run, use `epsilon_band_method: odb` (or `perkal`/
+# `both`) together with `compute_prob_change: true` instead -- see the
+# commented-out alternative below.
+#
+# Reuses the same real Allegan, MI 1938 vs. 2010 shoreline data as
+# config_without_professionals.yaml (see that file for data provenance
+# notes) so the ODB/perkal and prob_change outputs can be compared directly
+# against the same input shorelines and uncertainty values.
+#
+# Run with:
+#   python -m shoreline_uncertainty.cli run --config examples/config_prob_change.yaml
+
+output_dir: examples/output_prob_change
+
+target_crs: "EPSG:26989"
+
+confidence_levels: [0.5, 0.9, 0.95]
+significance_threshold: 0.8
+
+# "prob_change" replaces the ODB/perkal significance test with continuous
+# probability surfaces: a Gaussian position-probability surface per
+# shoreline year, plus a per-pixel and per-transect probability that the
+# observed cross-shore change between each pair of years is "real" rather
+# than an artifact of positional uncertainty.
+epsilon_band_method: prob_change
+
+# Alternative: keep epsilon_band_method as odb/perkal/both and add this flag
+# to get prob_change outputs IN ADDITION to (not instead of) the ODB/perkal
+# outputs, e.g.:
+#   epsilon_band_method: odb
+#   compute_prob_change: true
+# compute_prob_change is independent of epsilon_band_method and defaults to
+# false; it's only implied automatically when epsilon_band_method is exactly
+# "prob_change", as configured above.
+# compute_prob_change: false
+
+export_intersect_geometries: false
+
+# Grid cell size for both the similarity-style rasters (unused here, since
+# epsilon_band_method isn't odb/perkal/both) and the prob_change surfaces.
+raster_cell_size: 0.1
+
+# Length (site CRS units, usually meters) of the segments each shoreline in
+# a year pair is broken into for the change_probability_segments_<a>_vs_<b>.shp
+# outputs -- a per-segment summary (PROB_CHANGE attribute) of the
+# change_probability_<a>_<b>.tif raster, reduced from a continuous pixel
+# surface to one value per segment along the line itself. Only used when
+# prob_change surfaces are computed. Defaults to 50m.
+prob_change_segment_length: 1.0
+
+# Independent of everything above: if true, also compute End Point Rate
+# (EPR) and Linear Regression Rate (LRR) shoreline change-rate statistics
+# (the standard DSAS-style "average annual change" metrics) along a
+# separate, denser transect grid -- see each site's rate_transect_spacing
+# below. Defaults to false.
+compute_rate_of_change: true
+
+sites:
+  - name: allegan
+    transect_spacing: 10.0
+    transect_length: 300.0
+    coordinate_priority: UPPER_LEFT
+    # Spacing (site CRS units, usually meters) for the separate, denser
+    # transect grid used by compute_rate_of_change's EPR/LRR calculations --
+    # independent of transect_spacing above, which drives the general-purpose
+    # transects.shp / transect_distances_wide.csv outputs. Defaults to 1m;
+    # set coarser here (10m) to keep this example's runtime small over the
+    # ~5km Allegan baseline.
+    rate_transect_spacing: 1.0
+    shorelines:
+      - year: 1938
+        path: examples/data/allegan/allegan_shoreline_1938.shp
+        rmse95_override: 13.2795
+      - year: 2010
+        path: examples/data/allegan/allegan_shoreline_2010.shp
+        rmse95_override: 10.3848

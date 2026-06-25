@@ -1,0 +1,86 @@
+# Example run configuration for shoreline_uncertainty -- WITH a `professionals`
+# block (independent/inter-analyst shoreline comparison enabled).
+#
+# This points at the synthetic shapefiles produced by
+# examples/generate_synthetic_data.py (run that script first, or replace the
+# `path` values below with your own real shoreline shapefiles -- nothing
+# else needs to change).
+#
+# See examples/config_without_professionals.yaml for the same setup with the
+# professional-comparison feature omitted.
+#
+# Run with:
+#   python examples/generate_synthetic_data.py
+#   python -m shoreline_uncertainty.cli run --config examples/config_with_professionals.yaml
+
+output_dir: examples/output_with_professionals
+
+# If omitted, each site auto-detects a UTM zone from its data. Set this to
+# force every site into one common projected CRS instead. Accepts an
+# "EPSG:xxxx" string, a bare EPSG integer (e.g. 32616), or any other string
+# pyproj.CRS.from_user_input() understands (WKT, PROJ4, etc.).
+target_crs: null
+
+# Confidence levels used by the legacy/perkal iterative-buffer-growth method
+# and by identify_critical_areas (ignored if epsilon_band_method == "odb").
+confidence_levels: [0.5, 0.9, 0.95]
+
+# T in Wernette et al. (2017) Eq. 4: Ps below this threshold => statistically
+# real change.
+significance_threshold: 0.05
+
+# "odb" (published Overlapping Double Buffer method, recommended), "perkal"
+# (legacy/unpublished iterative buffer-growth method), or "both".
+epsilon_band_method: both
+
+# If true, also write the raw intersection/union geometries for each
+# significant pair (useful for QA in a desktop GIS).
+export_intersect_geometries: true
+
+# Grid cell size (in the site's projected CRS units, usually meters) for the
+# Similarity_Index / Significant_Change raster surfaces. Defaults to 0.5 if
+# omitted; set explicitly here for clarity.
+raster_cell_size: 0.1
+
+sites:
+  - name: example_site
+    transect_spacing: 10.0
+    transect_length: 1000.0
+    coordinate_priority: UPPER_LEFT
+    shorelines:
+      - year: 2000
+        path: examples/data/example_site/shoreline_2000.shp
+        # Provide RMSE components and the 95% positional-uncertainty radius
+        # (the buffer radius for ODB/perkal) is computed via Eqs. 1-3.
+        # `interp_distances` are the raw per-point digitizing/interpretation
+        # offsets `d` (e.g. distance between repeat-digitized vertices, or
+        # vs. a higher-accuracy reference shoreline) used to compute
+        # RMSE_I = sqrt(sum(d^2) / n) -- the interpretation-error component
+        # of Eq. 1. Provide `rmse_interp` directly instead if you already
+        # have that RMSE value.
+        uncertainty:
+          rmse_base: 1.5
+          rmse_georef: 1.0
+          interp_distances: [0.8, 1.1, 0.9, 1.3, 0.7]
+      - year: 2010
+        path: examples/data/example_site/shoreline_2010.shp
+        uncertainty:
+          rmse_base: 1.5
+          rmse_georef: 1.0
+          interp_distances: [1.0, 0.9, 1.2, 0.8, 1.1]
+      - year: 2020
+        path: examples/data/example_site/shoreline_2020.shp
+        # Or skip the RMSE calculation entirely and supply the 95% radius
+        # directly, e.g. from a previously-computed value:
+        rmse95_override: 4.2
+    # Independent ("professional") delineations of the same shoreline, used
+    # to characterize digitizing variability separately from real change.
+    # Omit this block entirely (see config_without_professionals.yaml) if
+    # you don't have multiple analysts' delineations to compare.
+    professionals:
+      - name: analyst_a
+        year: 2000
+        path: examples/data/example_site/shoreline_2000_analyst_a.shp
+      - name: analyst_b
+        year: 2000
+        path: examples/data/example_site/shoreline_2000_analyst_b.shp
