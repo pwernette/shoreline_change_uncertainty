@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shoreline-uncertainty"
+version = "0.1.0"
+description = "Arcpy-free reimplementation of Wernette et al. (2017) shoreline positional-uncertainty analysis"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "geopandas>=0.14",
+    "shapely>=2.0",
+    "pyproj>=3.5",
+    "rasterio>=1.3",
+    "pyogrio>=0.7",
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pyyaml>=6.0",
+    "tqdm>=4.65",
+    "requests>=2.28",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+examples = ["matplotlib>=3.7", "contextily>=1.5", "pillow>=10.0"]
+
+[project.scripts]
+shoreline-uncertainty = "shoreline_uncertainty.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["shoreline_uncertainty*"]

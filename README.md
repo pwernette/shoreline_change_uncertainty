@@ -8,7 +8,9 @@ Shoreline change analysis that accounts for positional uncertainty, from a combi
 
 <img src='/assets/multipanel.png' alt='Multi-panel figure showing the input shorelines, the output similarity-index and significant-change rasters, and the change-probability and rate-of-change statistics' width='100%'>
 
-**Figure 1:** From the input shorelines and associated uncertainties, the probability of the shoreline position is first computed as a probability surface, then the change-probability is computed for each year pair, and finally the End Point Rate and Linear Regression Rate statistics are computed along a denser transect grid. The output similarity-index and significant-change rasters are then computed from the probability surfaces, and the change-probability and rate-of-change statistics are written to a CSV.
+**Figure 1:** A single composite walking through the whole Allegan, MI analysis end to end -- 1938 shoreline, 2010 shoreline, similarity index, critical change areas, probability-of-change line segments, and probability-of-change polygons.
+
+From the input shorelines and associated uncertainties, the probability of the shoreline position is first computed as a probability surface, then the change-probability is computed for each year pair, and finally the End Point Rate and Linear Regression Rate statistics are computed along a denser transect grid. The output similarity-index and significant-change rasters are then computed from the probability surfaces, and the change-probability and rate-of-change statistics are written to a CSV.
 
 The `shoreline_uncertainty` package is a complete, **arcpy-free**
 reimplementation of the original ArcGIS Pro toolbox in
@@ -132,30 +134,6 @@ Every loop over sites, year pairs, transects, and buffer-pair geometries
 shows a `tqdm` progress bar by default. Pass `--no-progress` to the CLI (or
 `progress=False` to `run_pipeline`/`run_site` when calling the package
 directly) to suppress them, e.g. for CI logs.
-
-Example visualizations (regenerate with `python examples/make_screenshots.py`
-after running all three example configs) are in
-[`examples/screenshots/`](examples/screenshots/). The map-view figures are
-drawn over an open aerial-imagery basemap (via
-[contextily](https://contextily.readthedocs.io/); `pip install matplotlib
-contextily`) -- this needs outbound network access to a tile server at
-regeneration time, but each figure still renders without it (just minus the
-imagery layer) if tiles can't be fetched:
-
-Real Allegan, MI data, 1938 vs. 2010 (config_without_professionals.yaml):
-
-| | |
-|---|---|
-| ![Allegan shorelines with uncertainty buffers](examples/screenshots/allegan_shorelines_with_buffers.png) | ![Allegan shore-normal transects](examples/screenshots/allegan_transects.png) |
-| ![Allegan similarity index raster](examples/screenshots/allegan_similarity_index.png) | ![Allegan significant change raster](examples/screenshots/allegan_significant_change.png) |
-
-Same Allegan, MI data, prob_change probability surfaces
-(config_prob_change.yaml):
-
-| | |
-|---|---|
-| ![Allegan position confidence, 1938](examples/screenshots/allegan_position_confidence_1938.png) | ![Allegan position confidence, 2010](examples/screenshots/allegan_position_confidence_2010.png) |
-| ![Allegan position delta, 1938 to 2010](examples/screenshots/allegan_position_delta_1938_2010.png) | ![Allegan change probability, 1938 to 2010](examples/screenshots/allegan_change_probability_1938_2010.png) |
 
 ### Probabilistic position / change-probability surfaces
 

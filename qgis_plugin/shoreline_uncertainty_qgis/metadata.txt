@@ -1,0 +1,29 @@
+[general]
+name=Shoreline Change Uncertainty
+qgisMinimumVersion=3.16
+qgisMaximumVersion=4.99
+description=Positional-uncertainty and rate-of-change analysis for digitized shorelines (Wernette et al. 2017/2020), with no arcpy dependency.
+about=Computes RMSE-based positional uncertainty (RMSE_I/RMSE_O/RMSE95), overlapping-double-buffer (ODB) and Perkal significance testing, critical-area identification, shore-normal transects with rate-of-change (EPR/LRR), professional-delineation comparison, similarity-index/significant-change rasters, Gaussian change-probability surfaces and rate-change polygons, and an optional NOAA CO-OPS water-level lookup. Full feature parity with the standalone shoreline_uncertainty Python package, reimplemented on native QGIS/GDAL APIs (no geopandas/shapely/rasterio/pyogrio).
+version=0.1.0
+author=Phil Wernette
+email=wernett9@gmail.com
+
+# Both Qt5 (QGIS 3.x) and Qt6 (QGIS 4.0+) are supported via the qgis.PyQt
+# compatibility shim used throughout this plugin's UI code.
+supportsQt6=True
+
+tracker=https://github.com/REPLACE_ME/shoreline_change_uncertainty/issues
+repository=https://github.com/REPLACE_ME/shoreline_change_uncertainty
+homepage=https://github.com/REPLACE_ME/shoreline_change_uncertainty
+
+category=Vector
+icon=icon.png
+experimental=True
+deprecated=False
+server=False
+
+hasProcessingProvider=yes
+
+tags=shoreline,coastal,uncertainty,rmse,transects,rate of change,erosion,accretion,geomorphology
+
+changelog=0.1.0 initial scaffold: plugin skeleton, geometry/io ports, Processing provider stub.

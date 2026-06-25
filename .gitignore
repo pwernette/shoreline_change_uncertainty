@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Generated synthetic demo data/output -- regenerate with examples/generate_synthetic_data.py
+# (examples/data/allegan/ is real historical data and is intentionally NOT
+# ignored -- it's checked in so the without-professionals example works
+# out of the box.)
+examples/data/example_site/
+examples/output*/
+
+# Default pipeline output location
+/output/
