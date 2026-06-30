@@ -1,4 +1,6 @@
-# shoreline_change_uncertainty
+# Shoreline Change Analysis with Positional Uncertainty
+
+> Wernette, P. (2026). Shoreline change analysis with positional uncertainty [Software]. GitHub. doi:10.5281/zenodo.20754255
 
 Shoreline change analysis that accounts for positional uncertainty, from a combination of:
 
@@ -9,6 +11,20 @@ Shoreline change analysis that accounts for positional uncertainty, from a combi
 <img src='/assets/multipanel.png' alt='Multi-panel figure showing the input shorelines, the output similarity-index and significant-change rasters, and the change-probability and rate-of-change statistics' width='100%'>
 
 **Figure 1:** A single composite walking through the whole Allegan, MI analysis end to end -- 1938 shoreline, 2010 shoreline, similarity index, critical change areas, probability-of-change line segments, and probability-of-change polygons.
+
+## Table of Contents
+
+- [What it does](#what-it-does)
+- [Installation](#installation)
+- [Quickstart](#quickstart)
+- [Probabilistic position / change-probability surfaces](#probabilistic-position--change-probability-surfaces)
+- [Shoreline change-probability segments](#shoreline-change-probability-segments)
+- [End Point Rate / Linear Regression Rate](#end-point-rate--linear-regression-rate)
+- [Water-level lookup](#water-level-lookup-water-levels-subcommand)
+- [Configuration](#configuration)
+- [Testing](#testing)
+- [Package layout](#package-layout)
+- [Citation](#citation)
 
 From the input shorelines and associated uncertainties, the probability of the shoreline position is first computed as a probability surface, then the change-probability is computed for each year pair, and finally the End Point Rate and Linear Regression Rate statistics are computed along a denser transect grid. The output similarity-index and significant-change rasters are then computed from the probability surfaces, and the change-probability and rate-of-change statistics are written to a CSV.
 
@@ -430,3 +446,31 @@ shoreline_uncertainty/
 
 `original_program/arcgis_pro/` is left untouched as a historical reference;
 it requires ArcGIS Pro (arcpy) and is not used by anything in this package.
+
+## Citation
+
+If you use this code in your research, please cite it as:
+
+**APA:**
+Wernette, P. (2026). Shoreline change analysis with positional uncertainty [Software]. GitHub. doi:10.5281/zenodo.20754255
+
+**BibTeX:**
+```bibtex
+@software{wernette2026shoreline,
+  author = {Wernette, Phillipe},
+  title = {Shoreline change analysis with positional uncertainty},
+  year = {2026},
+  doi = {10.5281/zenodo.20754255},
+  publisher = {Zenodo},
+  url = {https://github.com/wernette/shoreline_change_uncertainty}
+}
+```
+
+**MLA:**
+Wernette, P. "Shoreline Change Analysis with Positional Uncertainty." GitHub, 2026, doi:10.5281/zenodo.20754255.
+
+Please also cite the original research papers on which this code is based:
+
+> Wernette, P., A. Shortridge, D. Lusch, and A.F. Arbogast. (2017) Accounting for positional uncertainty in historical shoreline change analysis without ground-reference information. *International Journal of Remote Sensing*, 38(13), 3906-3922. [https://doi.org/10.1080/01431161.2016.1200728](https://doi.org/10.1080/01431161.2016.1200728)
+
+> Wernette, P., J. Lehner, and C. Houser. (2020) What change is 'real'? A probabilistic approach to accounting for uncertainty in environmental change analysis. *Geomorphology*, 355, 107083. [https://doi.org/10.1016/j.geomorph.2020.107083](https://doi.org/10.1016/j.geomorph.2020.107083)
