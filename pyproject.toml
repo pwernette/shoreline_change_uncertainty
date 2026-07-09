@@ -5,9 +5,37 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "shoreline-uncertainty"
 version = "0.1.0"
-description = "Arcpy-free reimplementation of Wernette et al. (2017) shoreline positional-uncertainty analysis"
+description = "Arcpy-free shoreline change analysis with positional uncertainty (Wernette et al. 2017, 2020)"
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.9"
+authors = [
+    { name = "Phillipe Wernette", email = "pwernett@msu.edu" },
+]
+keywords = [
+    "shoreline",
+    "coastal",
+    "geomorphology",
+    "uncertainty",
+    "GIS",
+    "remote sensing",
+    "change detection",
+    "geopandas",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Hydrology",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
 dependencies = [
     "geopandas>=0.14",
     "shapely>=2.0",
@@ -26,8 +54,15 @@ dependencies = [
 dev = ["pytest>=7.0"]
 examples = ["matplotlib>=3.7", "contextily>=1.5", "pillow>=10.0"]
 
+[project.urls]
+Homepage = "https://github.com/pwernett/shoreline_change_uncertainty"
+Repository = "https://github.com/pwernett/shoreline_change_uncertainty"
+"Bug Tracker" = "https://github.com/pwernett/shoreline_change_uncertainty/issues"
+DOI = "https://doi.org/10.5281/zenodo.21267871"
+
 [project.scripts]
 shoreline-uncertainty = "shoreline_uncertainty.cli:main"
 
 [tool.setuptools.packages.find]
+# gui_app is intentionally excluded from the PyPI distribution.
 include = ["shoreline_uncertainty*"]

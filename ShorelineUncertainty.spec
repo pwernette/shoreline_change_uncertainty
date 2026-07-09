@@ -1,16 +1,35 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_all
+
+datas = []
+binaries = []
+hiddenimports = ['geopandas._compat', 'rasterio._shim', 'rasterio.crs', 'numpy', 'pandas', 'yaml', 'tqdm', 'requests', 'tkinter', 'tkinter.ttk', 'tkinter.scrolledtext', 'tkinter.filedialog', 'tkinter.messagebox']
+tmp_ret = collect_all('shoreline_uncertainty')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('rasterio')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('pyproj')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('geopandas')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('pyogrio')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('fiona')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('shapely')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
-    ['/mnt/c/users/werne/onedrive/documents/github/shoreline_change_uncertainty/gui_app/__main__.py'],
+    ['C:\\Users\\werne\\OneDrive\\Documents\\github\\shoreline_change_uncertainty\\gui_app\\__main__.py'],
     pathex=[],
-    binaries=[],
-    datas=[('/mnt/c/users/werne/onedrive/documents/github/shoreline_change_uncertainty/shoreline_uncertainty', 'shoreline_uncertainty')],
-    hiddenimports=['shoreline_uncertainty', 'shoreline_uncertainty.config', 'shoreline_uncertainty.pipeline', 'shoreline_uncertainty.uncertainty', 'shoreline_uncertainty.epsilon_bands', 'shoreline_uncertainty.transects', 'shoreline_uncertainty.critical_areas', 'shoreline_uncertainty.raster_output', 'shoreline_uncertainty.probability_surface', 'shoreline_uncertainty.rate_of_change', 'shoreline_uncertainty.water_level', 'shoreline_uncertainty.io_utils', 'shoreline_uncertainty.geometry_utils', 'shoreline_uncertainty.cli', 'geopandas', 'geopandas._compat', 'rasterio', 'rasterio._shim', 'rasterio.crs', 'shapely', 'shapely.geometry', 'pyogrio', 'fiona', 'pyproj', 'numpy', 'pandas', 'yaml', 'tqdm', 'requests', 'tkinter', 'tkinter.ttk', 'tkinter.scrolledtext', 'tkinter.filedialog', 'tkinter.messagebox'],
+    binaries=binaries,
+    datas=datas,
+    hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['tensorflow', 'tensorflow_core', 'tensorflow_estimator', 'keras', 'keras_preprocessing', 'torch', 'torchvision', 'torchaudio', 'sklearn', 'sklearn.ensemble', 'sklearn.linear_model', 'skimage', 'cv2', 'matplotlib', 'IPython', 'ipykernel', 'ipywidgets', 'notebook', 'jupyterlab', 'pytest', 'sphinx', 'docutils'],
     noarchive=False,
     optimize=0,
 )
@@ -19,20 +38,26 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
     [],
+    exclude_binaries=True,
     name='ShorelineUncertainty',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+)
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='ShorelineUncertainty',
 )

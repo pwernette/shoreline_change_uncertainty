@@ -1,5 +1,10 @@
 # Shoreline Change Analysis with Positional Uncertainty
 
+[![PyPI version](https://img.shields.io/pypi/v/shoreline-uncertainty.svg)](https://pypi.org/project/shoreline-uncertainty/)
+[![Python versions](https://img.shields.io/pypi/pyversions/shoreline-uncertainty.svg)](https://pypi.org/project/shoreline-uncertainty/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21267871.svg)](https://doi.org/10.5281/zenodo.21267871)
+
 **Citation:** Wernette, P. (2026) pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty. Zenodo. [![DOI](assets/zenodo.21267871.svg)](https://doi.org/10.5281/zenodo.21267871)
 
 Shoreline change analysis that accounts for positional uncertainty, from a combination of:
@@ -81,16 +86,23 @@ of sites.
 
 ## Installation
 
+**From PyPI** (recommended):
+
 ```bash
-pip install -e .
-# or, without an editable install:
-pip install -r requirements.txt
+pip install shoreline-uncertainty
+```
+
+**From source** (for development or the latest unreleased changes):
+
+```bash
+git clone https://github.com/pwernett/shoreline_change_uncertainty.git
+cd shoreline_change_uncertainty
+pip install -e .            # editable install
+pip install -e ".[dev]"     # + pytest for running the test suite
 ```
 
 Requires Python >= 3.9. Core dependencies: geopandas, shapely, pyproj,
-rasterio, pyogrio, pandas, numpy, scipy, pyyaml, tqdm, requests. Install
-`pytest` (or the `dev` extra: `pip install -e ".[dev]"`) to run the test
-suite.
+rasterio, pyogrio, pandas, numpy, scipy, pyyaml, tqdm, requests.
 
 ## Standalone GUI
 
@@ -134,13 +146,30 @@ pip install pyinstaller
 python gui_app/build_exe.py
 ```
 
-The output lands in `dist/`:
+The output lands in `dist_exe/ShorelineUncertainty/` as a folder containing the
+binary and all its dependencies:
 
-| Platform | Binary |
+| Platform | Launch with |
 |---|---|
-| Windows | `dist/ShorelineUncertainty.exe` |
-| Linux | `dist/ShorelineUncertainty` |
-| macOS | `dist/ShorelineUncertainty` |
+| Windows | `dist_exe\ShorelineUncertainty\ShorelineUncertainty.exe` |
+| Linux | `dist_exe/ShorelineUncertainty/ShorelineUncertainty` |
+| macOS | `dist_exe/ShorelineUncertainty/ShorelineUncertainty` |
+
+Distribute the entire `dist_exe/ShorelineUncertainty/` folder (zip it, or wrap
+it with an installer like NSIS on Windows or AppImage on Linux).
+
+To build the PyPI wheel separately (they go in `dist_pypi/` and don't conflict):
+
+```bash
+python -m build --outdir dist_pypi
+twine upload dist_pypi/*
+```
+
+> **Why a folder and not a single file?** The geospatial stack (geopandas,
+> rasterio, GDAL, pyproj) bundled from a conda environment easily exceeds 4 GB.
+> PyInstaller's `--onefile` format uses a 32-bit integer for archive offsets and
+> crashes above that limit. `--onedir` writes plain files and has no such
+> constraint.
 
 **Important:** PyInstaller always produces a binary for the platform it runs
 on. To distribute for Windows, run the build script on a Windows machine (or
@@ -540,7 +569,7 @@ it requires ArcGIS Pro (arcpy) and is not used by anything in this package.
 If you use this code in your research, please cite it as:
 
 **APA:**
-Wernette, P. (2026) pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty. Zenodo. [![DOI](assets/zenodo.21267870.svg)](https://doi.org/10.5281/zenodo.21267870)
+Wernette, P. (2026) pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty. Zenodo. [https://doi.org/10.5281/zenodo.21267871](https://doi.org/10.5281/zenodo.21267871)
 
 **BibTeX:**
 ```bibtex

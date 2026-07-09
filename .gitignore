@@ -14,3 +14,9 @@ examples/output*/
 
 # Default pipeline output location
 /output/
+
+# Virtual environments
+build_env/
+venv/
+.venv/
+env/
