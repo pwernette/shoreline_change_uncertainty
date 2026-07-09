@@ -1,6 +1,6 @@
 # Shoreline Change Analysis with Positional Uncertainty
 
-> Wernette, P. (2026). Shoreline change analysis with positional uncertainty [Software]. GitHub. doi:10.5281/zenodo.20754255
+**Citation:** Wernette, P. (2026) pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty. Zenodo. [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21267870.svg)](https://doi.org/10.5281/zenodo.21267870)
 
 Shoreline change analysis that accounts for positional uncertainty, from a combination of:
 
@@ -16,6 +16,7 @@ Shoreline change analysis that accounts for positional uncertainty, from a combi
 
 - [What it does](#what-it-does)
 - [Installation](#installation)
+- [Standalone GUI](#standalone-gui)
 - [Quickstart](#quickstart)
 - [Probabilistic position / change-probability surfaces](#probabilistic-position--change-probability-surfaces)
 - [Shoreline change-probability segments](#shoreline-change-probability-segments)
@@ -25,6 +26,7 @@ Shoreline change analysis that accounts for positional uncertainty, from a combi
 - [Testing](#testing)
 - [Package layout](#package-layout)
 - [Citation](#citation)
+- [About](#about)
 
 From the input shorelines and associated uncertainties, the probability of the shoreline position is first computed as a probability surface, then the change-probability is computed for each year pair, and finally the End Point Rate and Linear Regression Rate statistics are computed along a denser transect grid. The output similarity-index and significant-change rasters are then computed from the probability surfaces, and the change-probability and rate-of-change statistics are written to a CSV.
 
@@ -90,6 +92,82 @@ rasterio, pyogrio, pandas, numpy, scipy, pyyaml, tqdm, requests. Install
 `pytest` (or the `dev` extra: `pip install -e ".[dev]"`) to run the test
 suite.
 
+## Standalone GUI
+
+A tkinter-based graphical interface is included in `gui_app/`. It exposes every
+option in the YAML config schema through a point-and-click form and can save and
+load YAML files that are fully interchangeable with the CLI.
+
+### Running from source
+
+```bash
+# 1. Install the package (if you haven't already)
+pip install -e .
+
+# 2. Launch the GUI
+python -m gui_app
+```
+
+**Linux only** — tkinter is not always installed by default. Install it first:
+
+```bash
+# Debian / Ubuntu
+sudo apt install python3-tk
+
+# Fedora / RHEL / CentOS
+sudo dnf install python3-tkinter
+```
+
+macOS (Homebrew Python) and Windows ship tkinter as part of the standard
+library; no extra step is needed.
+
+### Building a standalone executable
+
+A single-file binary (no Python installation required on the target machine)
+can be built with [PyInstaller](https://pyinstaller.org):
+
+```bash
+# 1. Install PyInstaller
+pip install pyinstaller
+
+# 2. From the repo root, run the build script
+python gui_app/build_exe.py
+```
+
+The output lands in `dist/`:
+
+| Platform | Binary |
+|---|---|
+| Windows | `dist/ShorelineUncertainty.exe` |
+| Linux | `dist/ShorelineUncertainty` |
+| macOS | `dist/ShorelineUncertainty` |
+
+**Important:** PyInstaller always produces a binary for the platform it runs
+on. To distribute for Windows, run the build script on a Windows machine (or
+in a Windows CI runner); the script itself is identical on all platforms.
+
+### GUI overview
+
+The window has three tabs:
+
+- **Settings** — output directory, target CRS, epsilon-band method (ODB /
+  Perkal / Both), significance threshold, raster cell size, confidence levels,
+  and toggles for `export_intersect_geometries`, `compute_prob_change`
+  (+ segment length), and `compute_rate_of_change`.
+- **Sites** — manage multiple sites from a list; for each site configure its
+  name, transect spacing/length, and coordinate priority, then add/edit/remove
+  shoreline years (year, shapefile path, optional RMSE95 override, optional
+  acquisition date).
+- **Log** — live output from the analysis run (dark terminal style); can be
+  saved to a text file.
+
+**File → Open YAML** and **File → Save YAML** round-trip to the same YAML
+format used by the CLI, so any config built in the GUI can be run headlessly:
+
+```bash
+python -m shoreline_uncertainty.cli run --config my_config.yaml
+```
+
 ## Quickstart
 
 ```bash
@@ -103,9 +181,13 @@ python examples/generate_synthetic_data.py
 #    (synthetic data), one without it (real historical data), and one
 #    demonstrating the continuous prob_change probability surfaces (same
 #    real historical data).
-python -m shoreline_uncertainty.cli run --config examples/config_with_professionals.yaml --verbose
-python -m shoreline_uncertainty.cli run --config examples/config_without_professionals.yaml --verbose
-python -m shoreline_uncertainty.cli run --config examples/config_prob_change.yaml --verbose
+shoreline-uncertainty run --config examples/config_with_professionals.yaml --verbose
+shoreline-uncertainty run --config examples/config_without_professionals.yaml --verbose
+shoreline-uncertainty run --config examples/config_prob_change.yaml --verbose
+
+# If you name your config file config.yaml (or config.yml) and run from its
+# directory, --config can be omitted entirely:
+#   cd my_project && shoreline-uncertainty run
 ```
 
 Outputs are written under `<output_dir>/<site_name>/` (each example config
@@ -428,20 +510,26 @@ changes.
 
 ```
 shoreline_uncertainty/
-  config.py          run/site configuration (dataclasses + YAML/JSON loader)
-  uncertainty.py      RMSE / positional-uncertainty calculations (Eqs. 1-3)
-  epsilon_bands.py    ODB (Eq. 4) + legacy Perkal-style significance testing
-  transects.py         baseline + shore-normal transect generation/intersection
-  critical_areas.py   critical-area export for the Perkal method
-  comparison.py        professional/inter-analyst comparison
-  raster_output.py    GeoTIFF similarity-index / significant-change surfaces
-  probability_surface.py  Gaussian position/change-probability surfaces (prob_change)
-  rate_of_change.py    EPR / LRR shoreline change-rate statistics (compute_rate_of_change)
-  water_level.py        NOAA CO-OPS water-level lookup (water-levels subcommand)
-  io_utils.py          shapefile I/O, reprojection, CSV/log writers
-  geometry_utils.py   shared vertex-distance helpers
-  pipeline.py           per-site and full-run orchestration
-  cli.py                command-line entry point
+  config.py               run/site configuration (dataclasses + YAML/JSON loader)
+  uncertainty.py           RMSE / positional-uncertainty calculations (Eqs. 1-3)
+  epsilon_bands.py         ODB (Eq. 4) + legacy Perkal-style significance testing
+  transects.py              baseline + shore-normal transect generation/intersection
+  critical_areas.py        critical-area export for the Perkal method
+  comparison.py             professional/inter-analyst comparison
+  raster_output.py         GeoTIFF similarity-index / significant-change surfaces
+  probability_surface.py   Gaussian position/change-probability surfaces (prob_change)
+  rate_of_change.py         EPR / LRR shoreline change-rate statistics (compute_rate_of_change)
+  water_level.py             NOAA CO-OPS water-level lookup (water-levels subcommand)
+  io_utils.py               shapefile I/O, reprojection, CSV/log writers
+  geometry_utils.py        shared vertex-distance helpers
+  pipeline.py                per-site and full-run orchestration
+  cli.py                     command-line entry point
+
+gui_app/
+  __init__.py              package marker
+  __main__.py              entry point: python -m gui_app
+  app.py                   main tkinter application (Settings / Sites / Log tabs)
+  build_exe.py             PyInstaller build script → dist/ShorelineUncertainty(.exe)
 ```
 
 `original_program/arcgis_pro/` is left untouched as a historical reference;
@@ -452,25 +540,33 @@ it requires ArcGIS Pro (arcpy) and is not used by anything in this package.
 If you use this code in your research, please cite it as:
 
 **APA:**
-Wernette, P. (2026). Shoreline change analysis with positional uncertainty [Software]. GitHub. doi:10.5281/zenodo.20754255
+Wernette, P. (2026) pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty. Zenodo. [![DOI](assets/zenodo.21267870.svg)](https://doi.org/10.5281/zenodo.21267870)
 
 **BibTeX:**
 ```bibtex
 @software{wernette2026shoreline,
   author = {Wernette, Phillipe},
-  title = {Shoreline change analysis with positional uncertainty},
+  title = {pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty},
   year = {2026},
-  doi = {10.5281/zenodo.20754255},
+  doi = {10.5281/zenodo.21267870},
   publisher = {Zenodo},
-  url = {https://github.com/wernette/shoreline_change_uncertainty}
+  url = {https://github.com/pwernett/shoreline_change_uncertainty}
 }
 ```
 
 **MLA:**
-Wernette, P. "Shoreline Change Analysis with Positional Uncertainty." GitHub, 2026, doi:10.5281/zenodo.20754255.
+Wernette, P. "pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty." Zenodo, 2026, doi:10.5281/zenodo.21267870.
 
 Please also cite the original research papers on which this code is based:
 
 > Wernette, P., A. Shortridge, D. Lusch, and A.F. Arbogast. (2017) Accounting for positional uncertainty in historical shoreline change analysis without ground-reference information. *International Journal of Remote Sensing*, 38(13), 3906-3922. [https://doi.org/10.1080/01431161.2016.1200728](https://doi.org/10.1080/01431161.2016.1200728)
 
 > Wernette, P., J. Lehner, and C. Houser. (2020) What change is 'real'? A probabilistic approach to accounting for uncertainty in environmental change analysis. *Geomorphology*, 355, 107083. [https://doi.org/10.1016/j.geomorph.2020.107083](https://doi.org/10.1016/j.geomorph.2020.107083)
+
+## About
+
+The project is part of a broader collaboration to better understand landscape change and morphodynamic processes.
+
+For questions related to this project, please contact:
+
+Phillipe Wernette, PhD [pwernett@msu.edu]()

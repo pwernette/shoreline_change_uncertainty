@@ -1,13 +1,26 @@
 """Command-line entry point.
 
-Usage:
-    python -m shoreline_uncertainty.cli run --config path/to/config.yaml
-    python -m shoreline_uncertainty.cli water-levels --config path/to/config.yaml
+Usage
+-----
+    # Run the full pipeline (--config defaults to config.yaml in the cwd)
+    shoreline-uncertainty run
+    shoreline-uncertainty run --config path/to/config.yaml
+
+    # Look up NOAA water levels for every shoreline year
+    shoreline-uncertainty water-levels
+    shoreline-uncertainty water-levels --config path/to/config.yaml
+
+    # Launch the tkinter GUI
+    shoreline-uncertainty gui
+
+    # Show help
+    shoreline-uncertainty
 """
 from __future__ import annotations
 
 import argparse
 import logging
+import sys
 import time
 from pathlib import Path
 
@@ -18,73 +31,131 @@ from .io_utils import read_shoreline, write_table_csv
 from .pipeline import run_pipeline
 from .water_level import WaterLevelError, get_annual_water_level, get_water_level, site_lat_lon
 
+# Candidate filenames to look for when --config is omitted.
+_CONFIG_DEFAULTS = ("config.yaml", "config.yml")
+
+
+def _find_default_config() -> Path | None:
+    """Return the first of config.yaml / config.yml found in the cwd, or None."""
+    for name in _CONFIG_DEFAULTS:
+        p = Path.cwd() / name
+        if p.is_file():
+            return p
+    return None
+
+
+def _resolve_config(config_arg: str | None, parser: argparse.ArgumentParser) -> str:
+    """Return a config path string: either the explicit --config value, or the
+    auto-detected default. Exits with a friendly error if neither is available."""
+    if config_arg:
+        return config_arg
+    default = _find_default_config()
+    if default:
+        print(f"No --config given; using {default}")
+        return str(default)
+    parser.error(
+        "no --config argument given and no config.yaml / config.yml found in "
+        f"the current directory ({Path.cwd()}).\n"
+        "  Usage: shoreline-uncertainty run --config path/to/config.yaml"
+    )
+
 
 def main(argv=None):
-    """Parse CLI arguments and dispatch to the `run` or `water-levels`
-    subcommand. `argv` defaults to `sys.argv` (via argparse) when None, but
-    can be passed explicitly for testing.
+    """Parse CLI arguments and dispatch to a subcommand.
 
-    `run` loads a config file via `config.load_config` (which also
-    validates it) and runs the full pipeline via `pipeline.run_pipeline`,
-    printing, per site, the list of result keys produced (e.g. ["odb",
-    "transects", "rate_of_change"]) as a quick console summary.
+    Subcommands
+    -----------
+    run
+        Load a config file via :func:`config.load_config` and run the full
+        pipeline via :func:`pipeline.run_pipeline`. ``--config`` defaults to
+        ``config.yaml`` (or ``config.yml``) in the current working directory.
 
-    `water-levels` is unrelated to the pipeline above and never touches it:
-    it walks every shoreline year in the config, looks up the nearest
-    NOAA CO-OPS water-level station to that shoreline (see water_level.py)
-    and the water level there -- date-specific if `acquisition_date` is set
-    on that shoreline year, otherwise an annual mean -- and writes one row
-    per shoreline year to a CSV. This subcommand makes live network calls
-    (the `run` pipeline never does), so failures for an individual
-    shoreline (no nearby station, no data for that period, etc.) are caught
-    and recorded in the output CSV's `error` column rather than aborting
-    the whole run.
+    water-levels
+        Walk every shoreline year in the config, look up the nearest NOAA
+        CO-OPS water-level station, and write one row per year to a CSV.
+        Makes live network calls; individual failures are recorded in an
+        ``error`` column rather than aborting the run.
+
+    gui
+        Launch the tkinter graphical interface (``gui_app``). Requires
+        ``python3-tk`` on Linux; bundled on Windows and macOS.
     """
-    parser = argparse.ArgumentParser(prog="shoreline-uncertainty")
-    sub = parser.add_subparsers(dest="command", required=True)
+    parser = argparse.ArgumentParser(
+        prog="shoreline-uncertainty",
+        description="Shoreline change analysis with positional uncertainty.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "examples:\n"
+            "  shoreline-uncertainty run                          # uses config.yaml in cwd\n"
+            "  shoreline-uncertainty run --config my.yaml\n"
+            "  shoreline-uncertainty water-levels --config my.yaml\n"
+            "  shoreline-uncertainty gui\n"
+        ),
+    )
+    # Not required=True — no subcommand prints help instead of erroring.
+    sub = parser.add_subparsers(dest="command")
 
-    run_p = sub.add_parser("run", help="Run the full pipeline for a config file.")
-    run_p.add_argument("--config", required=True, help="Path to a YAML or JSON run config.")
+    run_p = sub.add_parser("run", help="Run the full pipeline.")
+    run_p.add_argument(
+        "--config", default=None,
+        help="Path to a YAML or JSON run config. Defaults to config.yaml in the cwd.",
+    )
     run_p.add_argument("--verbose", action="store_true")
     run_p.add_argument(
-        "--no-progress", action="store_true", help="Disable tqdm progress bars (e.g. for CI / non-interactive logs)."
+        "--no-progress", action="store_true",
+        help="Disable tqdm progress bars (e.g. for CI / non-interactive logs).",
     )
 
     wl_p = sub.add_parser(
         "water-levels",
-        help="Look up NOAA CO-OPS water level (Great Lakes + marine) for every shoreline year in a config.",
-    )
-    wl_p.add_argument("--config", required=True, help="Path to a YAML or JSON run config.")
-    wl_p.add_argument(
-        "--out", default=None, help="Output CSV path. Defaults to '<output_dir>/water_levels.csv'."
+        help="Look up NOAA CO-OPS water level for every shoreline year in a config.",
     )
     wl_p.add_argument(
-        "--datum", default=None, help="Override the datum for every lookup (default: auto -- IGLD for Great Lakes, MSL for marine)."
+        "--config", default=None,
+        help="Path to a YAML or JSON run config. Defaults to config.yaml in the cwd.",
     )
     wl_p.add_argument(
-        "--window-days",
-        type=int,
-        default=0,
-        help="For date-specific lookups, the +/- window (days) around acquisition_date to average (default 0).",
+        "--out", default=None,
+        help="Output CSV path. Defaults to '<output_dir>/water_levels.csv'.",
     )
     wl_p.add_argument(
-        "--sleep",
-        type=float,
-        default=0.25,
-        help="Seconds to sleep between CO-OPS API calls, to stay polite to the (free, no-key) service (default 0.25).",
+        "--datum", default=None,
+        help="Override the datum (default: auto — IGLD for Great Lakes, MSL for marine).",
+    )
+    wl_p.add_argument(
+        "--window-days", type=int, default=0,
+        help="±window (days) around acquisition_date for date-specific lookups (default 0).",
+    )
+    wl_p.add_argument(
+        "--sleep", type=float, default=0.25,
+        help="Seconds between CO-OPS API calls (default 0.25).",
     )
     wl_p.add_argument("--verbose", action="store_true")
 
+    sub.add_parser("gui", help="Launch the tkinter graphical interface.")
+
     args = parser.parse_args(argv)
-    logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING)
+
+    # No subcommand → print help and exit cleanly.
+    if not args.command:
+        parser.print_help()
+        sys.exit(0)
 
     if args.command == "run":
-        config = load_config(args.config)
+        logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING)
+        config_path = _resolve_config(args.config, run_p)
+        config = load_config(config_path)
         results = run_pipeline(config, progress=not args.no_progress)
         for site_name, site_results in results.items():
             print(f"{site_name}: {list(site_results.keys())}")
+
     elif args.command == "water-levels":
+        logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING)
+        args.config = _resolve_config(args.config, wl_p)
         _run_water_levels(args)
+
+    elif args.command == "gui":
+        _launch_gui()
 
 
 def _run_water_levels(args) -> pd.DataFrame:
@@ -140,6 +211,21 @@ def _run_water_levels(args) -> pd.DataFrame:
     n_ok = df["error"].isna().sum() if "error" in df.columns and len(df) else 0
     print(f"Wrote {len(df)} row(s) ({n_ok} successful) to {out_path}")
     return df
+
+
+def _launch_gui() -> None:
+    """Launch the tkinter GUI (gui_app package)."""
+    try:
+        from gui_app.app import ShorelineUncertaintyApp
+    except ModuleNotFoundError as exc:
+        sys.exit(
+            f"Cannot import gui_app: {exc}\n"
+            "Make sure you are running from the repository root and the "
+            "gui_app/ folder is present.\n"
+            "On Linux you may also need:  sudo apt install python3-tk"
+        )
+    app = ShorelineUncertaintyApp()
+    app.mainloop()
 
 
 if __name__ == "__main__":
