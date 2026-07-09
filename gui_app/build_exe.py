@@ -129,6 +129,49 @@ for e in EXCLUDE:
 FINAL_DIST = ROOT / "dist_exe" / "SURF"
 
 
+def _fix_proj_db(bundle_dir: Path) -> None:
+    """Replace the pyproj-bundled proj.db with the system version.
+
+    ``--collect-all pyproj`` bundles pyproj's own shipped proj.db, which may
+    have an older DATABASE.LAYOUT.VERSION.MINOR than the PROJ DLL collected
+    from the conda/system environment.  When the minor version is too low the
+    DLL raises a startup error:
+
+        PROJ: proj_create_from_name: proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 4
+        whereas a number >= 6 is expected.
+
+    Fix: find the system PROJ data directory (from PROJ_DATA / PROJ_LIB env
+    vars or the active conda prefix) and copy its proj.db over the bundled one.
+    """
+    import os
+    bundled = bundle_dir / "_internal" / "pyproj" / "proj_dir" / "share" / "proj" / "proj.db"
+    if not bundled.exists():
+        print("PROJ fix: bundled proj.db not found at expected path; skipping.")
+        return
+
+    candidates: list[Path] = []
+    for env_var in ("PROJ_DATA", "PROJ_LIB"):
+        val = os.environ.get(env_var)
+        if val:
+            candidates.append(Path(val))
+    conda_prefix = os.environ.get("CONDA_PREFIX")
+    if conda_prefix:
+        candidates.append(Path(conda_prefix) / "Library" / "share" / "proj")
+        candidates.append(Path(conda_prefix) / "share" / "proj")
+
+    for candidate in candidates:
+        db = candidate / "proj.db"
+        if db.exists() and db.resolve() != bundled.resolve():
+            print(f"PROJ fix: replacing bundled proj.db with {db}")
+            shutil.copy2(db, bundled)
+            return
+
+    print(
+        "PROJ fix: no suitable system proj.db found in PROJ_DATA, PROJ_LIB, "
+        "or CONDA_PREFIX; the bundled version may cause a minor-version mismatch."
+    )
+
+
 def _force_remove(path: Path) -> None:
     """Remove a directory tree robustly.
 
@@ -177,6 +220,8 @@ with tempfile.TemporaryDirectory(prefix="pyi_build_") as tmp_root:
     subprocess.run(cmd, check=True)
 
     src = tmp_dist / "SURF"
+    _fix_proj_db(src)  # replace pyproj-bundled proj.db with the system version
+
     print(f"\nCopying {src} -> {FINAL_DIST} ...")
     _force_remove(FINAL_DIST)
     shutil.copytree(src, FINAL_DIST)

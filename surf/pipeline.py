@@ -49,6 +49,13 @@ def _load_site_shorelines(site: SiteConfig, target_crs, *, progress: bool = True
     """Read every shoreline year for a site, reproject, and dissolve each to
     a single geometry for buffer/area/length math.
 
+    If ``target_crs`` is given (default: ``"EPSG:3175"`` Great Lakes Albers)
+    every year is reprojected to that CRS.  Pass ``None`` to keep each file
+    in its own projected CRS -- but when the files are in *different* projected
+    CRS (common when mixing historical scans with modern surveys), all years
+    are re-aligned to the first year's CRS so buffer/area/distance math stays
+    in a single consistent coordinate space.
+
     Returns (gdf_by_year, dissolved_geom_by_year, crs).
     """
     gdf_by_year = {}
@@ -57,7 +64,31 @@ def _load_site_shorelines(site: SiteConfig, target_crs, *, progress: bool = True
         gdf = io_utils.read_shoreline(sy.path)
         gdf = io_utils.ensure_projected(gdf, target_crs)
         gdf_by_year[sy.year] = gdf
-        crs = gdf.crs
+        if crs is None:
+            crs = gdf.crs
+
+    # Normalise to a single CRS when no target_crs was specified but the
+    # individual files turned out to be in different projected systems (e.g.
+    # a 1938 Hotine scan vs a 2010 modern survey in a different State Plane).
+    # Without this, epsilon-band buffers from the two years land in
+    # incompatible coordinate spaces and produce nonsensical bounding boxes.
+    if not target_crs and len(gdf_by_year) > 1:
+        first_crs = next(iter(gdf_by_year.values())).crs
+        mismatched = [y for y, g in gdf_by_year.items() if g.crs != first_crs]
+        if mismatched:
+            log.warning(
+                "Shoreline years %s are in a different CRS than year %s; "
+                "reprojecting to %s. Set target_crs in your config to silence this.",
+                mismatched,
+                next(iter(gdf_by_year)),
+                first_crs.to_epsg() or first_crs.name,
+            )
+            gdf_by_year = {
+                year: (gdf if gdf.crs == first_crs else gdf.to_crs(first_crs))
+                for year, gdf in gdf_by_year.items()
+            }
+        crs = first_crs
+
     dissolved = {year: unary_union(gdf.geometry) for year, gdf in gdf_by_year.items()}
     return gdf_by_year, dissolved, crs
 
@@ -178,19 +209,28 @@ def run_site(site: SiteConfig, run: RunConfig, output_dir: Path, *, progress: bo
         io_utils.write_table_csv(rate_long_table, site_dir / "rate_transect_intersections.csv")
         if not rate_long_table.empty:
             rate_wide_table = to_wide_table(rate_long_table)
-            rate_of_change_df = compute_rate_of_change(rate_wide_table)
-            io_utils.write_table_csv(rate_of_change_df, site_dir / "transect_rate_of_change.csv")
-            results["rate_of_change"] = rate_of_change_df
+            _year_cols = [c for c in rate_wide_table.columns if c.startswith("TO_")]
+            if len(_year_cols) < 2:
+                log.warning(
+                    "Rate transects only intersected %d shoreline year(s); "
+                    "skipping EPR/LRR (need ≥ 2). "
+                    "Check that all shoreline shapefiles overlap the transect grid.",
+                    len(_year_cols),
+                )
+            else:
+                rate_of_change_df = compute_rate_of_change(rate_wide_table)
+                io_utils.write_table_csv(rate_of_change_df, site_dir / "transect_rate_of_change.csv")
+                results["rate_of_change"] = rate_of_change_df
 
-            # Polygon-area analogue of the per-transect EPR statistics: the
-            # area between each pair of adjacent rate transects, with the
-            # magnitude/direction of change and probability of that change
-            # being "real" (see rate_of_change.build_rate_change_polygons).
-            rate_change_polygons = build_rate_change_polygons(
-                rate_transects, rate_wide_table, sigma_by_year, crs=crs,
-            )
-            io_utils.write_vector(rate_change_polygons, site_dir / "rate_change_polygons.shp")
-            results["rate_change_polygons"] = rate_change_polygons
+                # Polygon-area analogue of the per-transect EPR statistics: the
+                # area between each pair of adjacent rate transects, with the
+                # magnitude/direction of change and probability of that change
+                # being "real" (see rate_of_change.build_rate_change_polygons).
+                rate_change_polygons = build_rate_change_polygons(
+                    rate_transects, rate_wide_table, sigma_by_year, crs=crs,
+                )
+                io_utils.write_vector(rate_change_polygons, site_dir / "rate_change_polygons.shp")
+                results["rate_change_polygons"] = rate_change_polygons
 
     # --- Professional comparison ---
     if site.professionals:
@@ -325,16 +365,17 @@ def run_site(site: SiteConfig, run: RunConfig, output_dir: Path, *, progress: bo
     return results
 
 
+
 def run_pipeline(run: RunConfig, *, progress: bool = True) -> dict:
-    """Top-level entry point: create `run.output_dir` if needed, then call
-    `run_site` once per configured site, collecting each site's in-memory
-    results dict into one outer dict keyed by site name. This is what
-    `cli.py` and `load_config(...)`-based scripts call after building/
-    validating a RunConfig.
+    """Top-level entry point: create ``run.output_dir`` if needed, then call
+    ``run_site`` once per configured site, collecting each site's in-memory
+    result dict under the site name.
+
+    Returns a mapping of ``{site_name: results_dict}``.
     """
     output_dir = Path(run.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    all_results = {}
-    for site in tqdm(run.sites, desc="Processing sites", disable=not progress, leave=True):
+    all_results: dict = {}
+    for site in run.sites:
         all_results[site.name] = run_site(site, run, output_dir, progress=progress)
     return all_results

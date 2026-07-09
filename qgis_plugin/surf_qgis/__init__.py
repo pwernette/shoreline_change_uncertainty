@@ -10,6 +10,6 @@ from __future__ import annotations
 
 
 def classFactory(iface):  # noqa: N802 -- name required by QGIS's plugin loader
-    from .plugin import ShorelineUncertaintyPlugin
+    from .plugin import SURFPlugin
 
-    return ShorelineUncertaintyPlugin(iface)
+    return SURFPlugin(iface)

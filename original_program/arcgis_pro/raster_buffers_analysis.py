@@ -1,6 +1,11 @@
 '''
 Created on Jun 14, 2012
 
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
+
 Copyright 2012: Phil Wernette
 
 This script is designed to convert all vector buffers to rasters and then compile the rasters into a single layer
@@ -21,8 +26,8 @@ from arcpy import env
 env.overwriteOutput = T
 
 # Paths where data is stored and saved throughout processing
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/' # Geodatabase pathname
-gdb = 'C:/Users/Phil/Documents/ArcGIS/Epsilon_analysis_NONoverlap.gdb/'
+path = ''  # TODO: set path to your ArcGIS geodatabase # Geodatabase pathname
+gdb = ''  # TODO: set path to your non-overlap geodatabase
 
 # List of the four location to be assessed
 locations = ['alcona','allegan','manistee','sanilac']

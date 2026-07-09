@@ -1,7 +1,10 @@
 '''
 Created on Sep 6, 2011
 
-@author: Phil Wernette
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 
 MORE INFORMATION ABOUT CASTING TRANSECTS VIA SCRIPTING:
 http://forums.arcgis.com/threads/49206-Perpendicular-transects-at-regular-intervals?p=169011#post169011
@@ -18,7 +21,7 @@ def create_out_table(outpath, loc):
     arcpy.AddField_management(outputfc, "TRANSECT_NO", "SHORT")
     arcpy.AddField_management(outputfc, "TRANSECT_ID", "TEXT", "#", "#", "20")
 
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/'
+path = ''  # TODO: set path to your ArcGIS geodatabase
 
 locations = ['alcona','allegan','manistee','sanilac']
 

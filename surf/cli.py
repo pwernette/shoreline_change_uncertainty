@@ -216,7 +216,7 @@ def _run_water_levels(args) -> pd.DataFrame:
 def _launch_gui() -> None:
     """Launch the tkinter GUI (gui_app package)."""
     try:
-        from gui_app.app import ShorelineUncertaintyApp
+        from gui_app.app import SURFApp
     except ModuleNotFoundError as exc:
         sys.exit(
             f"Cannot import gui_app: {exc}\n"
@@ -224,7 +224,7 @@ def _launch_gui() -> None:
             "gui_app/ folder is present.\n"
             "On Linux you may also need:  sudo apt install python3-tk"
         )
-    app = ShorelineUncertaintyApp()
+    app = SURFApp()
     app.mainloop()
 
 

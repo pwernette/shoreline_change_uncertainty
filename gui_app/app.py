@@ -180,7 +180,7 @@ class _ShorelineDialog(tk.Toplevel):
 # Main application window
 # ---------------------------------------------------------------------------
 
-class ShorelineUncertaintyApp(tk.Tk):
+class SURFApp(tk.Tk):
     """Main tkinter window for the Shoreline Change Uncertainty GUI."""
 
     def __init__(self):
@@ -266,7 +266,7 @@ class ShorelineUncertaintyApp(tk.Tk):
 
         # Target CRS
         lbl("Target CRS:")
-        self._crs = tk.StringVar(value="EPSG:26989")
+        self._crs = tk.StringVar(value="EPSG:3175")
         cf = ttk.Frame(fr)
         cf.grid(row=r, column=1, sticky="w", pady=4); r += 1
         ttk.Entry(cf, textvariable=self._crs, width=18).pack(side="left")
@@ -826,6 +826,15 @@ class ShorelineUncertaintyApp(tk.Tk):
 
         crs = self._crs.get().strip() or None
 
+        if not crs:
+            import logging
+            logging.getLogger(__name__).warning(
+                "No Target CRS specified. SURF will attempt to auto-detect a common "
+                "CRS, but if your shapefiles are in different coordinate systems "
+                "(common with historical scans) results may be incorrect. "
+                "Set a Target CRS (e.g. EPSG:3175) in the Settings tab."
+            )
+
         return RunConfig(
             output_dir=out_dir,
             sites=site_cfgs,
@@ -1013,3 +1022,19 @@ class _QueueHandler(logging.Handler):
             self._q.put(self.format(record))
         except Exception:
             self.handleError(record)
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+
+def main():
+    """Launch the SURF GUI application."""
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(levelname)-5s %(message)s")
+    app = SURFApp()
+    app.mainloop()
+
+
+if __name__ == "__main__":
+    main()

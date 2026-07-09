@@ -17,7 +17,7 @@ from __future__ import annotations
 import pytest
 
 import surf_qgis.dialog as dialog_module
-from surf_qgis.plugin import ShorelineUncertaintyPlugin
+from surf_qgis.plugin import SURFPlugin
 
 
 class _FakeIface:
@@ -68,14 +68,14 @@ def _patch_message_box(monkeypatch):
 
 
 def test_run_does_nothing_when_dialog_not_accepted(monkeypatch):
-    monkeypatch.setattr(dialog_module, "ShorelineUncertaintyDialog", _make_fake_dialog(None))
+    monkeypatch.setattr(dialog_module, "SURFDialog", _make_fake_dialog(None))
 
     def _fail_if_called(*a, **k):
         raise AssertionError("execute_run_config should not be called when the dialog was canceled")
 
     monkeypatch.setattr("surf_qgis.runner.execute_run_config", _fail_if_called)
 
-    plugin = ShorelineUncertaintyPlugin(iface=_FakeIface())
+    plugin = SURFPlugin(iface=_FakeIface())
     plugin.run()
 
     assert _FakeMessageBox.info_calls == []
@@ -84,7 +84,7 @@ def test_run_does_nothing_when_dialog_not_accepted(monkeypatch):
 
 def test_run_executes_and_reports_success_when_dialog_accepted(monkeypatch):
     sentinel_run_config = object()
-    monkeypatch.setattr(dialog_module, "ShorelineUncertaintyDialog", _make_fake_dialog(sentinel_run_config))
+    monkeypatch.setattr(dialog_module, "SURFDialog", _make_fake_dialog(sentinel_run_config))
 
     captured = {}
 
@@ -96,7 +96,7 @@ def test_run_executes_and_reports_success_when_dialog_accepted(monkeypatch):
         "surf_qgis.runner.execute_run_config", _fake_execute_run_config
     )
 
-    plugin = ShorelineUncertaintyPlugin(iface=_FakeIface())
+    plugin = SURFPlugin(iface=_FakeIface())
     plugin.run()
 
     assert captured["run_config"] is sentinel_run_config
@@ -108,14 +108,14 @@ def test_run_executes_and_reports_success_when_dialog_accepted(monkeypatch):
 
 
 def test_run_reports_failure_when_execute_run_config_raises(monkeypatch):
-    monkeypatch.setattr(dialog_module, "ShorelineUncertaintyDialog", _make_fake_dialog(object()))
+    monkeypatch.setattr(dialog_module, "SURFDialog", _make_fake_dialog(object()))
 
     def _raise(*a, **k):
         raise RuntimeError("pipeline blew up")
 
     monkeypatch.setattr("surf_qgis.runner.execute_run_config", _raise)
 
-    plugin = ShorelineUncertaintyPlugin(iface=_FakeIface())
+    plugin = SURFPlugin(iface=_FakeIface())
     plugin.run()  # must not raise -- the failure is reported via QMessageBox, not propagated
 
     assert _FakeMessageBox.info_calls == []
@@ -138,7 +138,7 @@ def test_run_shows_placeholder_message_when_dialog_module_missing(monkeypatch):
 
     monkeypatch.setattr(builtins, "__import__", _fake_import)
 
-    plugin = ShorelineUncertaintyPlugin(iface=_FakeIface())
+    plugin = SURFPlugin(iface=_FakeIface())
     plugin.run()
 
     assert len(_FakeMessageBox.info_calls) == 1

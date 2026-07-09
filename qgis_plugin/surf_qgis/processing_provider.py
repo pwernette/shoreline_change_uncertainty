@@ -13,7 +13,7 @@ from qgis.core import QgsProcessingProvider
 from .processing_algorithm import RunAnalysisAlgorithm, WaterLevelLookupAlgorithm
 
 
-class ShorelineUncertaintyProvider(QgsProcessingProvider):
+class SURFProvider(QgsProcessingProvider):
     """One provider exposing both algorithms under a single
     "Shoreline Change Uncertainty" group in the Processing Toolbox."""
 

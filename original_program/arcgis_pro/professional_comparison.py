@@ -1,7 +1,10 @@
 '''
 Created on Jan 26, 2012
 
-@author: Phil
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 
 This script is designed to cycle through all the professionally-delineated shorelines and calculate the mean distances between them.
 Additionally, this same process is repeated for each site and each year between my personally-delineated shoreline and all of the
@@ -59,7 +62,7 @@ def clean_up():
     if arcpy.Exists(tmp):
         arcpy.Delete_management(tmp)
 
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/'
+path = ''  # TODO: set path to your ArcGIS geodatabase
 shorelinebuffer = path + 'shorelinebuffer'
 tempshoreline = path + 'tempshoreline'
 tempvert = path + 'tempshorelineverticies'

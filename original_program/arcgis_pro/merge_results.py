@@ -1,15 +1,18 @@
 '''
 Created on Feb 29, 2012
 
-@author: Phil
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 '''
 import time
 import arcpy
 from arcpy import env
 env.overwriteOutput = True
 
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/' # Geodatabase pathname
-outlog_path = 'C:/Users/Phil/Documents/Geography MS/analysis/' # Output log file location
+path = ''  # TODO: set path to your ArcGIS geodatabase # Geodatabase pathname
+outlog_path = ''  # TODO: set path to your output log directory # Output log file location
 
 shorelinebuffer = path + 'shorelinebuffer'
 tempvert = path + 'tempshorelineverticies'

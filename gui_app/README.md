@@ -66,15 +66,15 @@ pip install pyinstaller
 python gui_app/build_exe.py
 ```
 
-Output lands in `dist_exe/ShorelineUncertainty/`.
+Output lands in `dist_exe/SURF/`.
 
 | Platform | Launch command |
 |----------|----------------|
-| Windows  | `dist_exe\ShorelineUncertainty\ShorelineUncertainty.exe` |
-| Linux    | `dist_exe/ShorelineUncertainty/ShorelineUncertainty` |
-| macOS    | `dist_exe/ShorelineUncertainty/ShorelineUncertainty` |
+| Windows  | `dist_exe\SURF\SURF.exe` |
+| Linux    | `dist_exe/SURF/SURF` |
+| macOS    | `dist_exe/SURF/SURF` |
 
-Distribute the entire `dist_exe/ShorelineUncertainty/` folder (zip it up, or
+Distribute the entire `dist_exe/SURF/` folder (zip it up, or
 wrap it with an installer such as NSIS on Windows or AppImage on Linux).
 
 > **OneDrive / cloud-sync note:** the build script writes all intermediate and

@@ -1,7 +1,10 @@
 '''
 Created on 15 December 2011
 
-@author: Phil Wernette
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 
 Updated: 17 January 2012; 02 February 2012; 05 February 2012, 17 March 2012, 23 March 2012
 
@@ -86,8 +89,8 @@ def copyFC(gdb_path, fc_to_copy, new_name, fc_type):
     arcpy.CopyFeatures_management(fc_to_copy, newshore)
     del gdb_path, fc_to_copy, new_name, fc_type, newshore
 
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/' # Geodatabase pathname
-outlog_path = 'C:/Users/Phil/Documents/Geography MS/analysis/' # Output log file location
+path = ''  # TODO: set path to your ArcGIS geodatabase # Geodatabase pathname
+outlog_path = ''  # TODO: set path to your output log directory # Output log file location
 
 shorelinebuffer = path + 'shorelinebuffer'
 tempshoreline = path + 'tempshoreline'

@@ -248,7 +248,7 @@ def write_run_config(run: RunConfig, path: str | Path) -> None:
         path.write_text(yaml.safe_dump(raw, sort_keys=False))
 
 
-class ShorelineUncertaintyDialog(QDialog):
+class SURFDialog(QDialog):
     """The plugin's main input dialog. See module docstring for the
     quick-setup-tabs vs. load/save-config-file split."""
 

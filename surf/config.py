@@ -103,7 +103,7 @@ class RunConfig:
 
     sites: list  # list[SiteConfig]
     output_dir: str = "output"
-    target_crs: Optional[str] = None  # e.g. "EPSG:32616"; auto-UTM per site if None
+    target_crs: Optional[str] = "EPSG:3175"  # Great Lakes Albers; set to None to auto-UTM per site
     confidence_levels: list = field(default_factory=lambda: [0.05, 0.50, 0.90, 0.95])
     significance_threshold: float = 0.05  # T: Ps below this => statistically real change
     # "odb" (published), "perkal" (legacy), "both" (odb + perkal), or

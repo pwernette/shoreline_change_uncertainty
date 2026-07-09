@@ -1,7 +1,10 @@
 '''
 Created on May 29, 2012
 
-@author: Phil Wernette
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 
 This script is designed to add the "UNCERTAINTY" field to each shoreline feature class.
 Once the new field is manually populated, this attribute will define the radius of the buffer aroud the shoreline
@@ -13,7 +16,7 @@ import arcpy
 from arcpy import env
 env.overwriteOutput = T 
 
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/' # Geodatabase pathname
+path = ''  # TODO: set path to your ArcGIS geodatabase # Geodatabase pathname
 
 # List of the four location to be assessed
 locations = ['alcona','allegan','manistee','sanilac']

@@ -1,14 +1,17 @@
 '''
 Created on Sep 21, 2011
 
-@author: Phil Wernette
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 '''
 import arcpy
 import arcpy.mapping
 from arcpy import env
 env.overwriteOutput = True
 
-schema = "C:/Users/Phil/Documents/ArcGIS/Default.gdb"
+schema = ''  # TODO: set path to your ArcGIS geodatabase
 
 alcona_years = ['1938','1952','1963','1979','1992','1998','2005','2009','2010']
 allegan_years = ['1938','1950','1960','1967','1974','1998','2005','2009','2010']

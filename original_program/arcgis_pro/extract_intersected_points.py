@@ -1,16 +1,19 @@
 '''
 Created on May 11, 2012
 
-@author: Phil
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 '''
 
 import arcpy
 from arcpy import env
 env.overwriteOutput = True
 
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/' # Geodatabase pathname
-outpath = 'C:/Users/Phil/Documents/ArcGIS/Identity_data.gdb/' # Output geodatabase
-outlog_path = 'C:/Users/Phil/Documents/Geography MS/analysis/' # Output log file location
+path = ''  # TODO: set path to your ArcGIS geodatabase # Geodatabase pathname
+outpath = ''  # TODO: set path to your output geodatabase # Output geodatabase
+outlog_path = ''  # TODO: set path to your output log directory # Output log file location
 
 # List of the four location to be assessed
 locations = ['alcona','allegan','manistee','sanilac']

@@ -1,7 +1,10 @@
 '''
 Created on 02 February 2012
 
-@author: Phil Wernette
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 
 Updated: 12 March, 2012
 
@@ -67,8 +70,8 @@ def clean_up():
     if arcpy.Exists(temproute):
         arcpy.Delete_management(temproute)
 
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/' # Geodatabase pathname
-outlog_path = 'C:/Users/Phil/Documents/Geography MS/analysis/' # Output log file location
+path = ''  # TODO: set path to your ArcGIS geodatabase # Geodatabase pathname
+outlog_path = ''  # TODO: set path to your output log directory # Output log file location
 
 shorelinebuffer = path + 'shorelinebuffer'
 tempvert = path + 'tempshorelineverticies'

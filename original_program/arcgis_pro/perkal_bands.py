@@ -1,7 +1,10 @@
 '''
 Created on 15 December 2011
 
-@author: Phil Wernette
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 
 Updated: 17 January 2012; 02 February 2012; 05 February 2012
 
@@ -74,8 +77,8 @@ def clean_up():
     if arcpy.Exists(shorelinebuffer):
         arcpy.Delete_management(shorelinebuffer)
 
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/' # Geodatabase pathname
-outlog_path = 'C:/Users/Phil/Documents/Geography MS/analysis/' # Output log file location
+path = ''  # TODO: set path to your ArcGIS geodatabase # Geodatabase pathname
+outlog_path = ''  # TODO: set path to your output log directory # Output log file location
 
 shorelinebuffer = path + 'shorelinebuffer'
 tempshoreline = path + 'tempshoreline'

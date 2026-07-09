@@ -1,7 +1,10 @@
 '''
 Created on Feb 6, 2012
 
-@author: Phil
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
 
 Loops through all epsilon band output tables in geodatabase and copies the contents into a pipe-delimited .txt file
 in the specified output folder.
@@ -13,8 +16,8 @@ import arcpy
 from arcpy import env
 env.overwriteOutput = True
 
-path = 'C:/Users/Phil/Documents/ArcGIS/Default.gdb/' # Geodatabase pathname
-outlog_path = 'C:/Users/Phil/Documents/Geography MS/analysis/epsilon_band_results/' # Output log file location
+path = ''  # TODO: set path to your ArcGIS geodatabase # Geodatabase pathname
+outlog_path = ''  # TODO: set path to your output log directory
 
 # List of confidence levels to loop the analysis through
 confidence_levels = [0.05,0.50,0.90,0.95]

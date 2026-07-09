@@ -1,7 +1,7 @@
 """Tests for dialog.py.
 
 `build_run_config`/`write_run_config` are pure Python (no Qt dependency) and
-get full coverage here. `ShorelineUncertaintyDialog` itself is only smoke-
+get full coverage here. `SURFDialog` itself is only smoke-
 tested for construction: qgis_stub.py's qgis.PyQt stand-ins are deliberately
 bare/inert (see that module's docstring) and can't faithfully round-trip
 widget state (e.g. a QLineEdit stub's .text() doesn't return whatever
@@ -15,7 +15,7 @@ from __future__ import annotations
 import yaml
 import pytest
 
-from surf_qgis.dialog import ShorelineUncertaintyDialog, build_run_config, write_run_config
+from surf_qgis.dialog import SURFDialog, build_run_config, write_run_config
 
 
 def _base_kwargs(**overrides):
@@ -229,18 +229,18 @@ def test_write_run_config_preserves_uncertainty_components(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# ShorelineUncertaintyDialog -- construction smoke test only (see module
+# SURFDialog -- construction smoke test only (see module
 # docstring for why widget round-tripping isn't tested under the stub).
 # ---------------------------------------------------------------------------
 
 
 def test_dialog_constructs_without_error():
-    dialog = ShorelineUncertaintyDialog()
+    dialog = SURFDialog()
     assert dialog.run_config is None
 
 
 def test_dialog_has_four_tabs():
-    dialog = ShorelineUncertaintyDialog()
+    dialog = SURFDialog()
     # tabs is a stub object under qgis_stub -- just confirm addTab was
     # called the expected number of times via the recorded call args, since
     # the stub's count()/widget() accessors aren't meaningfully comparable.

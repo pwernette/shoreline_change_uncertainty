@@ -14,7 +14,7 @@ from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtGui import QIcon
 
 
-class ShorelineUncertaintyPlugin:
+class SURFPlugin:
     """QGIS requires this object to implement `initGui()` and `unload()`;
     everything else is ours to design."""
 
@@ -58,10 +58,10 @@ class ShorelineUncertaintyPlugin:
         try:
             from qgis.core import QgsApplication
 
-            from .processing_provider import ShorelineUncertaintyProvider
+            from .processing_provider import SURFProvider
         except ImportError:
             return
-        self._provider = ShorelineUncertaintyProvider()
+        self._provider = SURFProvider()
         QgsApplication.processingRegistry().addProvider(self._provider)
 
     def run(self) -> None:
@@ -75,7 +75,7 @@ class ShorelineUncertaintyPlugin:
         from qgis.PyQt.QtWidgets import QMessageBox
 
         try:
-            from .dialog import ShorelineUncertaintyDialog
+            from .dialog import SURFDialog
         except ImportError:
             QMessageBox.information(
                 self.iface.mainWindow(),
@@ -84,7 +84,7 @@ class ShorelineUncertaintyPlugin:
             )
             return
 
-        dialog = ShorelineUncertaintyDialog(self.iface.mainWindow())
+        dialog = SURFDialog(self.iface.mainWindow())
         dialog.exec_()
         if dialog.run_config is None:
             return  # user canceled / closed the dialog without accepting

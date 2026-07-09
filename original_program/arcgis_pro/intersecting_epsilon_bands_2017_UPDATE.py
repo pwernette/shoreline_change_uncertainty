@@ -1,6 +1,11 @@
 '''
 Created on May 23, 2012
 
+@author: Phillipe Wernette, PhD
+Director, Remote Sensing & GIS Research and Outreach Services (RS&GIS)
+Michigan State University, East Lansing, MI 48823
+pwernett@msu.edu
+
 Copyright 2012: Phil Wernette
 
 This script is designed to do a comprehensive epsilon bands analysis for each research site. It loops through all of the specified
@@ -77,7 +82,7 @@ def clean_up(items):
 path = 'D:/Documents/ArcGIS/Default.gdb/' # Geodatabase pathname
 outlog_path = 'D:/Dropbox/Geography MS/analysis/' # Output log file location
 overlap_gdb = 'D:/Documents/ArcGIS/Epsilon_analysis_OVERLAP.gdb/' # Geodatabase with overlapping segments
-# diff_gdb = 'C:/Users/Phil/Documents/ArcGIS/Epsilon_analysis_NONoverlap.gdb/'
+# diff_gdb = ''  # TODO: set path to your non-overlap geodatabase
 
 # List of temporary feature classes that will be used in the processing
 buffer_a = path + 'shorelinebuffera'

@@ -64,4 +64,6 @@ DOI = "https://doi.org/10.5281/zenodo.21285653"
 surf = "surf.cli:main"
 
 [tool.setuptools.packages.find]
-# gui_app is intentiona
+# gui_app is intentionally excluded from the installable package;
+# it is bundled as a standalone exe via PyInstaller.
+include = ["surf*"]
