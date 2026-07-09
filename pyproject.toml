@@ -58,7 +58,7 @@ examples = ["matplotlib>=3.7", "contextily>=1.5", "pillow>=10.0"]
 Homepage = "https://github.com/pwernett/shoreline-surf"
 Repository = "https://github.com/pwernett/shoreline-surf"
 "Bug Tracker" = "https://github.com/pwernett/shoreline-surf/issues"
-DOI = "https://doi.org/10.5281/zenodo.21285653"
+DOI = "https://doi.org/10.5281/zenodo.21286139"
 
 [project.scripts]
 surf = "surf.cli:main"

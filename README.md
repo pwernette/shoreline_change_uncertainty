@@ -3,9 +3,9 @@
 [![PyPI version](https://img.shields.io/pypi/v/shoreline-surf.svg)](https://pypi.org/project/shoreline-surf/)
 [![Python versions](https://img.shields.io/pypi/pyversions/shoreline-surf.svg)](https://pypi.org/project/shoreline-surf/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21285653.svg)](https://doi.org/10.5281/zenodo.21285653)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21286139.svg)](https://doi.org/10.5281/zenodo.21286139)
 
-**Citation:** Wernette, P. (2026) SURF: Shoreline Uncertainty and Rate Framework (v0.1.0). Zenodo. [![DOI](assets/zenodo.21285653.svg)](https://doi.org/10.5281/zenodo.21285653)
+**Citation:** Wernette, P. (2026) SURF: Shoreline Uncertainty and Rate Framework (v0.1.0). Zenodo. [![DOI](assets/zenodo.21286139.svg)](https://doi.org/10.5281/zenodo.21286139)
 
 Shoreline change analysis that accounts for positional uncertainty, from a combination of:
 
@@ -569,7 +569,7 @@ it requires ArcGIS Pro (arcpy) and is not used by anything in this package.
 If you use this code in your research, please cite it as:
 
 **APA:**
-Wernette, P. (2026) SURF: Shoreline Uncertainty and Rate Framework (v0.1.0). Zenodo. https://doi.org/10.5281/zenodo.21285653
+Wernette, P. (2026) SURF: Shoreline Uncertainty and Rate Framework (v0.1.0). Zenodo. https://doi.org/10.5281/zenodo.21286139
 
 **BibTeX:**
 ```bibtex
@@ -578,14 +578,14 @@ Wernette, P. (2026) SURF: Shoreline Uncertainty and Rate Framework (v0.1.0). Zen
   title     = {{SURF}: {S}horeline {U}ncertainty and {R}ate {F}ramework},
   year      = {2026},
   version   = {0.1.0},
-  doi       = {10.5281/zenodo.21285653},
+  doi       = {10.5281/zenodo.21286139},
   publisher = {Zenodo},
   url       = {https://github.com/pwernett/shoreline-surf}
 }
 ```
 
 **MLA:**
-Wernette, P. "SURF: Shoreline Uncertainty and Rate Framework." Zenodo, 2026, https://doi.org/10.5281/zenodo.21285653
+Wernette, P. "SURF: Shoreline Uncertainty and Rate Framework." Zenodo, 2026, https://doi.org/10.5281/zenodo.21286139
 
 Please also cite the original research papers on which this code is based:
 
