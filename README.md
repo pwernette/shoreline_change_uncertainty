@@ -1,6 +1,6 @@
 # Shoreline Change Analysis with Positional Uncertainty
 
-**Citation:** Wernette, P. (2026) pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty. Zenodo. [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21267870.svg)](https://doi.org/10.5281/zenodo.21267870)
+**Citation:** Wernette, P. (2026) pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty. Zenodo. [![DOI](assets/zenodo.21267871.svg)](https://doi.org/10.5281/zenodo.21267871)
 
 Shoreline change analysis that accounts for positional uncertainty, from a combination of:
 
@@ -548,14 +548,14 @@ Wernette, P. (2026) pwernette/shoreline_change_uncertainty: Shoreline change ana
   author = {Wernette, Phillipe},
   title = {pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty},
   year = {2026},
-  doi = {10.5281/zenodo.21267870},
+  doi = {10.5281/zenodo.21267871},
   publisher = {Zenodo},
   url = {https://github.com/pwernett/shoreline_change_uncertainty}
 }
 ```
 
 **MLA:**
-Wernette, P. "pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty." Zenodo, 2026, doi:10.5281/zenodo.21267870.
+Wernette, P. "pwernette/shoreline_change_uncertainty: Shoreline change analysis with positional uncertainty." Zenodo, 2026, [https://doi.org/10.5281/zenodo.21267871](https://doi.org/10.5281/zenodo.21267871)
 
 Please also cite the original research papers on which this code is based:
 
